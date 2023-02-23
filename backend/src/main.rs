@@ -40,8 +40,8 @@ async fn main() -> anyhow::Result<()> {
         let res = handle_log(log, &meta).await;
         match res {
             Ok(_) => {
-                println!("Log handle success. {:?}", res);
                 write_checkpoint(chain_id, meta.block_number.as_u64())?;
+                println!("Log handle success.");
             }, 
             Err(e) => {
                 println!("Failed to handle log: {:?}", e);
