@@ -16,6 +16,7 @@ pub async fn send_letter(letter: Letter) -> Result<String> {
         merge_variables: MergeVariables {
             body: letter.html.unwrap(),
         },
+        description: letter.idem_key.clone().unwrap(),
     };
     let uri = &[&CONFIG.mail_api_url, "/print-mail/v1/letters"].concat();
     let response = client
@@ -39,6 +40,7 @@ struct LetterRequest {
     pub template: String,
     pub color: bool,
     pub merge_variables: MergeVariables,
+    pub description: String,
 }
 
 #[derive(Debug, Deserialize, Serialize)]
