@@ -1,5 +1,4 @@
 use anyhow::Result;
-use maplit::hashmap;
 use serde::{Deserialize, Serialize};
 
 use crate::config::CONFIG;
@@ -9,10 +8,14 @@ pub async fn send_letter(letter: Letter) -> Result<String> {
     // HACK: this is jank, we are dropping any other fields that were actualy customized in the
     // letter object. but we dont use anything else atm and the reason i cant pass the whole obj
     // is there is something wrong w the api that it doesnt let me send the full nested obj
-    let params = hashmap! {
-       "from" => letter.from.id.unwrap(),
-       "to" => letter.to.id.unwrap(),
-       "html" => letter.html,
+    let req = LetterRequest {
+        from: letter.from.id.unwrap(),
+        to: letter.to.id.unwrap(),
+        color: true,
+        template: &CONFIG.mail_api_template,
+        merge_variables: MergeVariables {
+            body: letter.html.unwrap(),
+        },
     };
     let uri = &[&CONFIG.mail_api_url, "/print-mail/v1/letters"].concat();
     let response = client
@@ -20,12 +23,27 @@ pub async fn send_letter(letter: Letter) -> Result<String> {
         .header("x-api-key", &CONFIG.mail_api_key)
         .header("Content-Type", "application/json")
         .header("Idempotency-key", letter.idem_key.unwrap())
-        .form(&params)
+        .json(&req)
         .send()
         .await?;
 
     let body: Letter = response.json().await?;
+    // TODO
     Ok(body.id.unwrap())
+}
+#[derive(Debug, Deserialize, Serialize)]
+#[serde(rename_all = "camelCase")]
+struct LetterRequest {
+    pub from: String,
+    pub to: String,
+    pub template: String,
+    pub color: bool,
+    pub merge_variables: MergeVariables,
+}
+
+#[derive(Debug, Deserialize, Serialize)]
+struct MergeVariables {
+    pub body: String,
 }
 
 pub async fn create_contact(contact: Contact) -> Result<Contact> {
@@ -60,7 +78,8 @@ pub async fn get_default_sender() -> Result<Contact> {
 pub struct Letter {
     pub from: Contact,
     pub to: Contact,
-    pub html: String,
+    pub html: Option<String>,
+    pub template: Option<String>,
     pub idem_key: Option<String>,
     // #[serde(skip_serializing_if = "Option::is_none")]
     pub id: Option<String>,
@@ -82,10 +101,10 @@ impl Letter {
     pub fn new(from: Contact, to: Contact, html: String, tx_hash: String, tx_index: u64) -> Self {
         let idem_key = format!("{}-{}", tx_hash, tx_index.to_string());
         Letter {
-            idem_key: Some(idem_key), 
+            idem_key: Some(idem_key),
             from,
             to,
-            html,
+            html: Some(html),
             id: None,
             address_placement: None,
             double_sided: None,
@@ -99,6 +118,7 @@ impl Letter {
             express: None,
             mailing_class: None,
             size: None,
+            template: None,
         }
     }
 }

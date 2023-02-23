@@ -24,6 +24,7 @@ impl Config {
         let default_sender = env::var("DEFAULT_SENDER").expect("DEFAULT_SENDER is not set");
         let mail_api_url = env::var("MAIL_API_URL").expect("MAIL_API_URL is not set");
         let mail_api_key = env::var("MAIL_API_KEY").expect("MAIL_API_KEY is not set");
+        let mail_api_template = env::var("TEMPLATE_ID").expect("TEMPLATE_ID is not set");
         let decryption_key = env::var("PK").expect("PK is not set");
         Ok(Config {
             rpc,

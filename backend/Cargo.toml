@@ -14,6 +14,7 @@ serde = "1.0.152"
 tokio = { version = "1.25", features = ["full"] }
 ecies = {version = "0.2", default-features = false, features = ["pure"]}
 cargo-deb = "1.42.1"
+tokio-tungstenite = { version = "0.17", features = ["native-tls"] }
 
 [package.metadata.deb]
 maintainer = "rsproule23@gmail.com"
