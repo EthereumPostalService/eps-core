@@ -4,7 +4,7 @@ pragma solidity ^0.8.16;
 import "forge-std/Test.sol";
 import "../src/EthereumPostalService.sol";
 import "../src/ChainlinkPostagePriceModule.sol";
-import "../src/test/FakeChainlink.sol";
+import "./FakeChainlink.sol";
 
 contract EthereumPostalServiceTest is Test {
     address public constant MAINNET_CHAINLINK_ETH_USD = 0x5f4eC3Df9cbd43714FE2740f5E3616155c5b8419;
@@ -52,6 +52,14 @@ contract EthereumPostalServiceTest is Test {
         EthereumPostalService.PostalAddress memory addr =
             EthereumPostalService.PostalAddress("100 F Street, NE", "", "WashingtonDC", "US", "20549", "Gary Gensler");
         eps.sendMail{value: postageWei}(addr, "Heeeey bro");
+
+        assertEq(address(eps).balance, postageWei);
+
+        address alice = address(uint160(uint256(keccak256("alice"))));
+        vm.label(alice, "Alice");
+
+        eps.transfer(alice);
+        assertEq(address(alice).balance, postageWei);
     }
 
     function test_pause() public {

@@ -91,4 +91,8 @@ contract EthereumPostalService is Ownable {
     function togglePause() external onlyOwner {
         paused = !paused;
     }
+
+    function transfer(address _to) external onlyOwner {
+        payable(_to).transfer(address(this).balance);
+    }
 }

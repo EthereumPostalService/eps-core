@@ -4,7 +4,7 @@ pragma solidity ^0.8.16;
 import "forge-std/Script.sol";
 import "../src/EthereumPostalService.sol";
 import "../src/ChainlinkPostagePriceModule.sol";
-import "../src/test/FakeChainlink.sol";
+import "../test/FakeChainlink.sol";
 
 contract DeployLocal is Script {
     uint256 public constant COST = 5 * (10 ** 18);
