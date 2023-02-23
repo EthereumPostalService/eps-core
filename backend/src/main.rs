@@ -35,7 +35,7 @@ async fn main() -> anyhow::Result<()> {
         .from_block(last_block)
         .address(contract_address.into());
 
-    let mut stream = event.subscribe_with_meta().await?.take(2);
+    let mut stream = event.subscribe_with_meta().await?;
     while let Some(Ok((log, meta))) = stream.next().await {
         let res = handle_log(log, &meta).await;
         match res {

@@ -9,10 +9,10 @@ dotenv = "0.15.0"
 ethers = { version = "1.0.2", features = ["ws"] }
 lazy_static = "1.4.0"
 maplit = "1.0.2"
-reqwest = {version = "0.11.14", features = ["json"] }
+reqwest = { version = "0.11.14", features = ["json"] }
 serde = "1.0.152"
 tokio = { version = "1.25", features = ["full"] }
-ecies = {version = "0.2", default-features = false, features = ["pure"]}
+ecies = { version = "0.2", default-features = false, features = ["pure"] }
 cargo-deb = "1.42.1"
 tokio-tungstenite = { version = "0.17", features = ["native-tls"] }
 
@@ -20,7 +20,19 @@ tokio-tungstenite = { version = "0.17", features = ["native-tls"] }
 maintainer = "rsproule23@gmail.com"
 copyright = "2023, Ryan Sproule"
 assets = [
-	["target/release/mail", "usr/bin/mail", "755"], 
-	["README.md", "usr/share/doc/mail/README", "644"],
-	["debian/mail.service", "/lib/systemd/system/mail.service",  "644"]]
-
+	[
+		"target/release/mail",
+		"usr/bin/mail",
+		"755",
+	],
+	[
+		"README.md",
+		"usr/share/doc/mail/README",
+		"644",
+	],
+	[
+		"debian/mail.service",
+		"/lib/systemd/system/mail.service",
+		"644",
+	],
+]
