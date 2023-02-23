@@ -26,6 +26,11 @@ interface Network {
 let networks: Network[] =
     [
         {
+            name: "anvil",
+            rpcUrl: "http://localhost:8545",
+            chainlink_eth_usd: "0xa0Ee7A142d267C1f36714E4a8F75612F20a79720" // fake
+        },
+        {
             name: "goerli",
             rpcUrl: `https://eth-goerli.alchemyapi.io/v2/${alchemyApiKey}`,
         },
@@ -33,6 +38,16 @@ let networks: Network[] =
             name: "sepolia",
             rpcUrl: `https://sepolia.infura.io/v3/${infuraApiKey}`
         },
+        {
+            name: "mainnet",
+            rpcUrl: `https://eth-mainnet.g.alchemy.com/v2/${alchemyApiKey}`,
+            chainlink_eth_usd: "0x5f4eC3Df9cbd43714FE2740f5E3616155c5b8419"
+        },
+        {
+            name: "optimism",
+            rpcUrl: `https://opt-mainnet.g.alchemy.com/v2/${alchemyApiKey}`,
+            chainlink_eth_usd: "0x13e3Ee699D1909E989722E753853AE30b17e08c5"
+        }
     ]
 
 export default class NetworkConfig {

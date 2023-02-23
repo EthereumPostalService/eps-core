@@ -4,11 +4,12 @@
   "author": "sragss, rsproule",
   "license": "MIT",
   "dependencies": {
+    "@types/commander": "^2.12.2",
     "@types/node": "^18.14.0",
+    "commander": "^10.0.0",
+    "dotenv": "^16.0.3",
     "ethers": "^6.0.6",
-    "ts-command-line-args": "^2.4.2",
     "ts-node": "^10.9.1",
-    "typescript": "^4.9.5",
-    "@eth-mail/client-lib": "*"
+    "typescript": "^4.9.5"
   }
 }

@@ -3,7 +3,8 @@ import { genPrivateKey } from "../lib/src/enc";
 
 export async function gen() {
     let privateKey = genPrivateKey();
-    console.log(`Encryption public key: ${privateKey.publicKey.toHex()}\nPrivate key: ${privateKey.toHex()}`);
+    console.log(`Encryption Public key: 0x${privateKey.publicKey.toHex()}
+        \nPrivate key: ${privateKey.toHex()}`);
 }
 
 gen()

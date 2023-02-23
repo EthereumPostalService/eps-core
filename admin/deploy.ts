@@ -1,24 +1,23 @@
 import { exit } from "process";
-import { parse } from "ts-command-line-args";
 import NetworkConfig from "./network-config";
 import { ContractFactory, JsonRpcProvider, Wallet } from "ethers";
 import { abi as EPSCoreAbi, bytecode as EPSCoreBytecode } from "../contracts/out/EthereumPostalService.sol/EthereumPostalService.json";
 import { abi as ChainlinkPostageModuleAbi, bytecode as ChainlinkPostageModuleBytecode } from "../contracts/out/ChainlinkPostagePriceModule.sol/ChainlinkPostagePriceModule.json";
+import { Command } from "commander";
 
-interface Args {
-    network: string,
-    pk: string,
-    postage_usd: string,
-    encryption_pub_key: string
-}
+const program = new Command();
+program
+    .name("EPS Deployer")
+    .description("Deploy the fuckin' Ethereum Postal Service")
+    .requiredOption("--network <network>")
+    .requiredOption("--pk <pk>")
+    .requiredOption("--postage_usd <postage_usd>")
+    .requiredOption("--encryption_pub_key <encryption_pub_key>");
+
 
 export async function deploy() {
-    const args = parse<Args>({
-        network: String,
-        pk: String,
-        postage_usd: String,
-        encryption_pub_key: String,
-    });
+    program.parse();
+    let args = program.opts();
 
     let rpcUrl = NetworkConfig.getRpc(args.network);
     if (rpcUrl === undefined) {
