@@ -1,4 +1,4 @@
-![logo](imgs/ethMail-color@1920x.png)
+![logo](imgs/EPS-opt-1-dark@1920x.png)
 
 # EthMail
 
