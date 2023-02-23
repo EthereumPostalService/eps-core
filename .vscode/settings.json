@@ -1,0 +1,23 @@
+{
+    "explorer.confirmDragAndDrop": false,
+    "editor.formatOnSave": true,
+    "[typescriptreact]": {
+        "editor.defaultFormatter": "esbenp.prettier-vscode"
+    },
+    "[css]": {
+        "editor.defaultFormatter": "esbenp.prettier-vscode"
+    },
+    "[solidity]": {
+        "editor.defaultFormatter": "JuanBlanco.solidity"
+    },
+    "solidity.packageDefaultDependenciesContractsDirectory": "src",
+    "solidity.packageDefaultDependenciesDirectory": "lib",
+    "solidity.remappings": [
+        "forge-std/=contracts/lib/forge-std/src/", 
+        "@openzeppelin/=contracts/lib/openzeppelin-contracts/",
+        "@chainlink/=contracts/lib/chainlink"
+    ],
+    "solidity.defaultCompiler": "remote",
+    "solidity.compileUsingRemoteVersion": "v0.8.17",
+    "solidity.formatter": "forge"
+}

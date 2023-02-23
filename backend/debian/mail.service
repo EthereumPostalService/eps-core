@@ -1,0 +1,13 @@
+[Unit]
+AssertPathExists=/usr/bin/mail
+
+[Service]
+WorkingDirectory=~
+ExecStart=/usr/bin/mail
+Restart=always
+PrivateTmp=true
+NoNewPrivileges=true
+
+[Install]
+Alias=mail	
+WantedBy=default.target

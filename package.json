@@ -1,0 +1,26 @@
+{
+  "name": "eth-mail",
+  "version": "1.0.0",
+  "repository": "git@github.com:sragss/EthMail.git",
+  "author": "sragss, rsproule",
+  "license": "MIT",
+  "private": true,
+  "workspaces": [
+    "test",
+    "widget",
+    "status-site",
+    "contracts",
+    "lib"
+  ],
+  "scripts": {
+    "test": "cd contracts && forge test -vvv",
+    "start-local-backend": "cd contracts && anvil",
+    "deploy-local-backend": "cd contracts && forge script script/DeployLocal.s.sol:DeployLocal --rpc-url http://localhost:8545 --broadcast",
+    "call-local-backend": "cd contracts && forge script script/CallLocal.s.sol:CallLocal --rpc-url http://localhost:8545 --broadcast",
+    "build": "cd contracts && forge build",
+    "integration-test": "cd test && yarn test",
+    "start-widget": "cd widget && npm run start",
+    "build-widget": "cd widget && npm run build",
+    "start-status-site": "cd status-site & npm run start"
+  }
+}
