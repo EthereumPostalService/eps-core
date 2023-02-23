@@ -9,6 +9,7 @@ pub struct Config {
     pub mail_api_key: String,
     pub default_sender: String,
     pub decryption_key: String,
+    pub mail_api_template: String,
 }
 lazy_static! {
     pub static ref CONFIG: Config = {
@@ -33,6 +34,7 @@ impl Config {
             mail_api_key,
             default_sender,
             decryption_key,
+            mail_api_template,
         })
     }
 }

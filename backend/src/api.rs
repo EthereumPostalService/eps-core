@@ -12,7 +12,7 @@ pub async fn send_letter(letter: Letter) -> Result<String> {
         from: letter.from.id.unwrap(),
         to: letter.to.id.unwrap(),
         color: true,
-        template: &CONFIG.mail_api_template,
+        template: CONFIG.mail_api_template.clone(),
         merge_variables: MergeVariables {
             body: letter.html.unwrap(),
         },
