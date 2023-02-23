@@ -37,9 +37,16 @@ async fn main() -> anyhow::Result<()> {
 
     let mut stream = event.subscribe_with_meta().await?.take(2);
     while let Some(Ok((log, meta))) = stream.next().await {
-        handle_log(log, &meta).await?;
-        // TODO: is this fully wired up now?
-        write_checkpoint(chain_id, meta.block_number.as_u64())?;
+        let res = handle_log(log, &meta).await;
+        match res {
+            Ok(_) => {
+                println!("Log handle success. {:?}", res);
+                write_checkpoint(chain_id, meta.block_number.as_u64())?;
+            }, 
+            Err(e) => {
+                println!("Failed to handle log: {:?}", e);
+            }
+        }
     }
     Ok(())
 }
