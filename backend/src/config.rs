@@ -1,5 +1,14 @@
+use clap::Parser;
 use dotenv::dotenv;
 use std::env;
+
+/// Simple program to greet a person
+#[derive(Parser, Debug)]
+#[command(author, version, about, long_about = None)]
+struct Args {
+    #[arg(short, long, default_value_t = ".env" )]
+    env: Option<String>,
+}
 
 #[derive(Debug)]
 pub struct Config {
@@ -19,7 +28,7 @@ lazy_static! {
 }
 impl Config {
     pub fn from_cli() -> anyhow::Result<Config> {
-        dotenv().ok();
+        dotenv::from_path(env_path.as_path()).ok();
         let rpc = env::var("RPC_ENDPOINT").expect("RPC_ENDPOINT is not set");
         let contract = env::var("CONTRACT").expect("CONTRACT is not set");
         let default_sender = env::var("DEFAULT_SENDER").expect("DEFAULT_SENDER is not set");
@@ -27,6 +36,7 @@ impl Config {
         let mail_api_key = env::var("MAIL_API_KEY").expect("MAIL_API_KEY is not set");
         let mail_api_template = env::var("TEMPLATE_ID").expect("TEMPLATE_ID is not set");
         let decryption_key = env::var("PK").expect("PK is not set");
+        println!("{:?}", rpc);
         Ok(Config {
             rpc,
             contract,
