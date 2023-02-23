@@ -49,21 +49,21 @@ async fn handle_log(event: MailReceivedFilter, meta: &LogMeta) -> anyhow::Result
     let secret_key = &CONFIG.decryption_key;
     let target_contact = if !event.address_encrypted {
         Contact::new(
-            event.address_line_1,
-            event.address_line_2,
-            event.city,
-            event.country_code,
-            event.postal_or_zip,
-            event.name,
+            event.postal_address.address_line_1,
+            event.postal_address.address_line_2,
+            event.postal_address.city,
+            event.postal_address.country_code,
+            event.postal_address.postal_or_zip,
+            event.postal_address.name,
         )
     } else {
         Contact::new(
-            decrypt_string(secret_key, event.address_line_1)?,
-            decrypt_string(secret_key, event.address_line_2)?,
-            decrypt_string(secret_key, event.city)?,
-            decrypt_string(secret_key, event.country_code)?,
-            decrypt_string(secret_key, event.postal_or_zip)?,
-            decrypt_string(secret_key, event.name)?,
+            decrypt_string(secret_key, event.postal_address.address_line_1)?,
+            decrypt_string(secret_key, event.postal_address.address_line_2)?,
+            decrypt_string(secret_key, event.postal_address.city)?,
+            decrypt_string(secret_key, event.postal_address.country_code)?,
+            decrypt_string(secret_key, event.postal_address.postal_or_zip)?,
+            decrypt_string(secret_key, event.postal_address.name)?,
         )
     };
     let target = create_contact(target_contact).await?;
