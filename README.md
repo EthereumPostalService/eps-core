@@ -1,6 +1,6 @@
 ![logo](imgs/EPS-opt-1-dark@1920x.png)
 
-# EthMail
+# Ethereum Postal Service
 
 Send physical letters with an on-chain smart contract call.
 
