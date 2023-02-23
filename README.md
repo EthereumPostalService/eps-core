@@ -2,7 +2,7 @@
 
 # Ethereum Postal Service
 
-Send physical letters with an on-chain smart contract call.
+Send physical letters with an Ethereum smart contract call. An interface can be found at [EthereumPostalService.com](https://ethereumpostalservice.com/) or the contract can be called directly at `0x02ac179Cbb5d118769cD561B5e76e12ab6d68132` on both Ethereum and Optimism (coming soon to a chain near you!).
 
 Is it trustless? No.
 
