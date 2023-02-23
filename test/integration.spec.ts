@@ -4,7 +4,7 @@ import { ChildProcess, exec, spawn } from 'child_process';
 import express from "express";
 import { encrypt, encryptAddress, genPrivateKey } from '../lib/src/enc';
 import { Wallet, JsonRpcProvider, Contract, WebSocketProvider } from "ethers";
-import { abi as CONTRACT_ABI } from "../contracts/out/EthMail.sol/EthMail.json";
+import { abi as CONTRACT_ABI } from "../contracts/out/EthereumPostalService.sol/EthereumPostalService.json";
 import bodyParser from 'body-parser';
 
 describe('Integration Test', async () => {
@@ -83,7 +83,7 @@ describe('Integration Test', async () => {
         await delay(1_000);
 
         let pk = genPrivateKey();
-        let msg = "Hello from EthMail";
+        let msg = "Hello from EPS";
         let msgEncrypted = encrypt(msg, pk.publicKey.toHex());
         let address = {
             addressLine1: "1 School Rd",

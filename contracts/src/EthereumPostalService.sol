@@ -9,7 +9,7 @@ error RefundFailed(address to);
 error Paused();
 error InsufficentPostagePayment(uint256 postageSent, uint256 postageRequired);
 
-contract EthMail is Ownable {
+contract EthereumPostalService is Ownable {
     event MailReceived(
         string addressLine1,
         string addressLine2,

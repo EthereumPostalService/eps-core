@@ -2,11 +2,11 @@
 pragma solidity ^0.8.16;
 
 import "forge-std/Test.sol";
-import "../src/EthMail.sol";
+import "../src/EthereumPostalService.sol";
 import "../src/ChainlinkPostagePriceModule.sol";
 import "../src/test/FakeChainlink.sol";
 
-contract EthMailTest is Test {
+contract EthereumPostalServiceTest is Test {
     address public constant MAINNET_CHAINLINK_ETH_USD = 0x5f4eC3Df9cbd43714FE2740f5E3616155c5b8419;
     uint256 public constant COST = 5 * (10 ** 18);
 
@@ -14,7 +14,7 @@ contract EthMailTest is Test {
 
     FakeChainlink fakeChainlink;
     ChainlinkPostagePriceModule postagePriceModule;
-    EthMail ethMail;
+    EthereumPostalService eps;
 
     function setUp() public {
         string memory MAINNET_RPC_URL = vm.envString("MAINNET_RPC_URL");
@@ -23,14 +23,14 @@ contract EthMailTest is Test {
 
         fakeChainlink = new FakeChainlink();
         postagePriceModule = new ChainlinkPostagePriceModule(AggregatorV3Interface(fakeChainlink), COST);
-        ethMail = new EthMail(IPostagePriceModule(postagePriceModule), "\x00\x01");
+        eps = new EthereumPostalService(IPostagePriceModule(postagePriceModule), "\x00\x01");
     }
 
     function test_mainnetFork() public {
         ChainlinkPostagePriceModule mPostagePriceModule =
             new ChainlinkPostagePriceModule(AggregatorV3Interface(MAINNET_CHAINLINK_ETH_USD), COST);
-        EthMail mEthMail = new EthMail(IPostagePriceModule(mPostagePriceModule), "\x00\x01");
-        uint256 postageWei = mEthMail.getPostageWei();
+        EthereumPostalService mEPS = new EthereumPostalService(IPostagePriceModule(mPostagePriceModule), "\x00\x01");
+        uint256 postageWei = mEPS.getPostageWei();
 
         uint256 upper = 5 * (10 ** 18) / 100;
         uint256 lower = 5 * (10 ** 18) / 10000;
@@ -38,46 +38,46 @@ contract EthMailTest is Test {
         assertTrue(lower <= postageWei);
         assertTrue(upper >= postageWei);
 
-        EthMail.PostalAddress memory addr =
-            EthMail.PostalAddress("100 F Street, NE", "", "WashingtonDC", "US", "20549", "Gary Gensler");
-        mEthMail.sendMail{value: postageWei}(addr, "Heeeey bro");
+        EthereumPostalService.PostalAddress memory addr =
+            EthereumPostalService.PostalAddress("100 F Street, NE", "", "WashingtonDC", "US", "20549", "Gary Gensler");
+        mEPS.sendMail{value: postageWei}(addr, "Heeeey bro");
     }
 
     function test_fakeChainlink() public {
-        uint256 postageWei = ethMail.getPostageWei();
+        uint256 postageWei = eps.getPostageWei();
 
         uint256 result = 5 * (10 ** 18) / 1600;
         assertEq(result, postageWei);
 
-        EthMail.PostalAddress memory addr =
-            EthMail.PostalAddress("100 F Street, NE", "", "WashingtonDC", "US", "20549", "Gary Gensler");
-        ethMail.sendMail{value: postageWei}(addr, "Heeeey bro");
+        EthereumPostalService.PostalAddress memory addr =
+            EthereumPostalService.PostalAddress("100 F Street, NE", "", "WashingtonDC", "US", "20549", "Gary Gensler");
+        eps.sendMail{value: postageWei}(addr, "Heeeey bro");
     }
 
     function test_pause() public {
-        uint256 postageWei = ethMail.getPostageWei();
+        uint256 postageWei = eps.getPostageWei();
 
         uint256 result = 5 * (10 ** 18) / 1600;
         assertEq(result, postageWei);
 
-        EthMail.PostalAddress memory addr =
-            EthMail.PostalAddress("100 F Street, NE", "", "WashingtonDC", "US", "20549", "Gary Gensler");
-        ethMail.togglePause();
+        EthereumPostalService.PostalAddress memory addr =
+            EthereumPostalService.PostalAddress("100 F Street, NE", "", "WashingtonDC", "US", "20549", "Gary Gensler");
+        eps.togglePause();
         vm.expectRevert(Paused.selector);
-        ethMail.sendMail{value: postageWei}(addr, "Heeeey bro");
+        eps.sendMail{value: postageWei}(addr, "Heeeey bro");
     }
 
     function test_refund() public {
-        uint256 postageWei = ethMail.getPostageWei();
+        uint256 postageWei = eps.getPostageWei();
 
         uint256 result = 5 * (10 ** 18) / 1600;
         assertEq(result, postageWei);
 
-        EthMail.PostalAddress memory addr =
-            EthMail.PostalAddress("100 F Street, NE", "", "WashingtonDC", "US", "20549", "Gary Gensler");
+        EthereumPostalService.PostalAddress memory addr =
+            EthereumPostalService.PostalAddress("100 F Street, NE", "", "WashingtonDC", "US", "20549", "Gary Gensler");
         vm.prank(address(0));
-        ethMail.sendMail{value: postageWei * 2}(addr, "Heeeey bro");
+        eps.sendMail{value: postageWei * 2}(addr, "Heeeey bro");
 
-        assertEq(address(ethMail).balance, postageWei);
+        assertEq(address(eps).balance, postageWei);
     }
 }

@@ -3,13 +3,12 @@
 Listens to some on chain events. If certain event is emitted, then we trigger
 off-chain action.
 
---- 
-
+---
 
 Clone the repo:
 
 ```
-git clone git@github.com:sragss/ethMail.git
+git clone git@github.com:ethereumpostalservice/eps-core.git
 cd backend
 ```
 
@@ -19,7 +18,7 @@ Fill out the `.env`
 cp .env.example .env
 ```
 
-``` bash
+```bash
 # fill these out with relevant data
 RPC_ENDPOINT=
 CONTRACT=
@@ -35,10 +34,10 @@ PK=
 
 Build or run locally:
 
-``` bash
+```bash
 cargo run
 # or
-cargo build --release 
+cargo build --release
 target/release/mail
 ```
 
@@ -57,7 +56,7 @@ sudo dpkg -i target/debian/<this name depends on ur system, just tab complete it
 start the service:
 
 ```
-sudo systemctl start mail 
+sudo systemctl start mail
 ```
 
 check status

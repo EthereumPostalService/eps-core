@@ -18,7 +18,7 @@ use std::sync::Arc;
 
 abigen!(
     MailContract,
-    "../contracts/out/EthMail.sol/EthMail.json",
+    "../contracts/out/EthereumPostalService.sol/EthereumPostalService.json",
     event_derives(serde::Deserialize, serde::Serialize)
 );
 

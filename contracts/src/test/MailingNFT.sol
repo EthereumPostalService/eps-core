@@ -7,7 +7,7 @@ import "../MailSender.sol";
 contract MailingNFT is ERC721URIStorage, MailSender {
     uint256 public tokenCounter;
 
-    constructor(address ethMailAddr) ERC721("COLLECTION", "TICKER") MailSender(ethMailAddr) {
+    constructor(address epsAddr) ERC721("COLLECTION", "TICKER") MailSender(epsAddr) {
         tokenCounter = 0;
     }
 

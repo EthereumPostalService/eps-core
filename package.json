@@ -1,7 +1,7 @@
 {
   "name": "eth-mail",
   "version": "1.0.0",
-  "repository": "git@github.com:sragss/EthMail.git",
+  "repository": "git@github.com:ethereumpostalservice/eps-core.git",
   "author": "sragss, rsproule",
   "license": "MIT",
   "private": true,

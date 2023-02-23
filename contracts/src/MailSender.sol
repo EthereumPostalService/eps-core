@@ -1,13 +1,13 @@
 // SPDX-License-Identifier: MIT
 pragma solidity ^0.8.16;
 
-import "./EthMail.sol";
+import "./EthereumPostalService.sol";
 
 abstract contract MailSender {
-    EthMail public ethMail;
+    EthereumPostalService public eps;
 
-    constructor(address _ethMailAddress) {
-        ethMail = EthMail(_ethMailAddress);
+    constructor(address _ethereumPostalService) {
+        eps = EthereumPostalService(_ethereumPostalService);
     }
 
     modifier sendsMail() {
@@ -21,10 +21,10 @@ abstract contract MailSender {
             string memory htmlMessage
         ) = mailFields();
 
-        EthMail.PostalAddress memory postalAddress =
-            EthMail.PostalAddress(addressLine1, addressLine2, city, countryCode, postalOrZip, name);
-        uint256 postageCost = ethMail.getPostageWei();
-        ethMail.sendMail{value: postageCost}(postalAddress, htmlMessage);
+        EthereumPostalService.PostalAddress memory postalAddress =
+            EthereumPostalService.PostalAddress(addressLine1, addressLine2, city, countryCode, postalOrZip, name);
+        uint256 postageCost = eps.getPostageWei();
+        eps.sendMail{value: postageCost}(postalAddress, htmlMessage);
 
         if (msg.value > postageCost) {
             bool refunded = payable(address(msg.sender)).send(msg.value - postageCost);
@@ -47,10 +47,10 @@ abstract contract MailSender {
             string memory htmlMessage
         ) = mailFields();
 
-        EthMail.PostalAddress memory postalAddress =
-            EthMail.PostalAddress(addressLine1, addressLine2, city, countryCode, postalOrZip, name);
-        uint256 postageCost = ethMail.getPostageWei();
-        ethMail.sendEncryptedMail{value: postageCost}(postalAddress, htmlMessage, true, true);
+        EthereumPostalService.PostalAddress memory postalAddress =
+            EthereumPostalService.PostalAddress(addressLine1, addressLine2, city, countryCode, postalOrZip, name);
+        uint256 postageCost = eps.getPostageWei();
+        eps.sendEncryptedMail{value: postageCost}(postalAddress, htmlMessage, true, true);
 
         if (msg.value > postageCost) {
             bool refunded = payable(address(msg.sender)).send(msg.value - postageCost);
