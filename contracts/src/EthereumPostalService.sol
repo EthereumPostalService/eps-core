@@ -11,12 +11,7 @@ error InsufficentPostagePayment(uint256 postageSent, uint256 postageRequired);
 
 contract EthereumPostalService is Ownable {
     event MailReceived(
-        string addressLine1,
-        string addressLine2,
-        string city,
-        string countryCode,
-        string postalOrZip,
-        string name,
+        PostalAddress postalAddress,
         string msgHtml,
         address sender,
         bool addressEncrypted,
@@ -52,19 +47,7 @@ contract EthereumPostalService is Ownable {
 
     function sendMail(PostalAddress calldata postalAddress, string calldata msgHtml) external payable pausable {
         handlePayment();
-        emit MailReceived(
-            postalAddress.addressLine1,
-            postalAddress.addressLine2,
-            postalAddress.city,
-            postalAddress.countryCode,
-            postalAddress.postalOrZip,
-            postalAddress.name,
-            msgHtml,
-            msg.sender,
-            false,
-            false,
-            0x0
-            );
+        emit MailReceived(postalAddress, msgHtml, msg.sender, false, false, 0x0);
     }
 
     function sendEncryptedMail(
@@ -74,19 +57,7 @@ contract EthereumPostalService is Ownable {
         bool msgEncrypted
     ) external payable pausable {
         handlePayment();
-        emit MailReceived(
-            postalAddress.addressLine1,
-            postalAddress.addressLine2,
-            postalAddress.city,
-            postalAddress.countryCode,
-            postalAddress.postalOrZip,
-            postalAddress.name,
-            msgHtml,
-            msg.sender,
-            addressEncrypted,
-            msgEncrypted,
-            bytes2(encryptionPubKey)
-            );
+        emit MailReceived(postalAddress, msgHtml, msg.sender, addressEncrypted, msgEncrypted, bytes2(encryptionPubKey));
     }
 
     function handlePayment() internal {

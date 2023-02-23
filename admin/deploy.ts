@@ -55,6 +55,10 @@ export async function deploy() {
     await deployEps.waitForDeployment();
     let addr = await deployEps.getAddress();
     console.log(`EthereumPostalService deployed to: ${addr}`);
+
+    console.log(`Verify contracts on ${args.network} by export ETHERSCAN_API_KEY=<api key for network>`)
+    console.log(`Verify with: forge verify-contract --watch --chain ${args.network} --constructor-args $(cast abi-encode "constructor(address,uint256)" "${chainlinkEthUsd}" "${postageBigDecimals.toString(10)}") ${chainlinkPostagePriceModuleAddr} ChainlinkPostagePriceModule`)
+    console.log(`Verify with: forge verify-contract --watch --chain ${args.network} --constructor-args $(cast abi-encode "constructor(address,bytes)" "${chainlinkPostagePriceModuleAddr}" "${args.encryption_pub_key}") ${addr} EthereumPostalService`)
 }
 
 deploy().then().catch(err => {

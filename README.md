@@ -37,10 +37,10 @@ The EthereumPostalService contract also exposes a `sendEncryptedMail()` function
 
 # Addresses
 
-| Chain    | `EthereumPostalService.sol ` | `ChainlinkPostagePriceModule` | Chainlink ETH / USD                          |
-| -------- | ---------------------------- | ----------------------------- | -------------------------------------------- |
-| Mainnet  | TBD                          | TBD                           | `0x5f4eC3Df9cbd43714FE2740f5E3616155c5b8419` |
-| Optimism | TBD                          | TBD                           | `0x13e3Ee699D1909E989722E753853AE30b17e08c5` |
+| Chain    | `EthereumPostalService.sol `                 | `ChainlinkPostagePriceModule`                | Chainlink ETH / USD                          |
+| -------- | -------------------------------------------- | -------------------------------------------- | -------------------------------------------- |
+| Mainnet  | `0x02ac179Cbb5d118769cD561B5e76e12ab6d68132` | `0x495Cce1026C4b42d6d337F29a15022C8DE595Cc3` | `0x5f4eC3Df9cbd43714FE2740f5E3616155c5b8419` |
+| Optimism | `0x02ac179Cbb5d118769cD561B5e76e12ab6d68132` | `0x495Cce1026C4b42d6d337F29a15022C8DE595Cc3` | `0x13e3Ee699D1909E989722E753853AE30b17e08c5` |
 
 # Cmds
 
