@@ -25,26 +25,28 @@ abigen!(
 #[tokio::main]
 async fn main() -> anyhow::Result<()> {
     // INSTANCE.set(config).expect("couldn't globalize config");
-    let provider = Provider::<Ws>::connect(&CONFIG.rpc).await.unwrap();
-    let provider = Arc::new(provider);
-    let chain_id = provider.get_chainid().await?;
-    let contract_address = Address::from_str(&CONFIG.contract)?;
-    let last_block = get_checkpoint(chain_id).unwrap_or(0);
+    for rpc in &CONFIG.rpcs {
+        let provider = Provider::<Ws>::connect(rpc).await.unwrap();
+        let provider = Arc::new(provider);
+        let chain_id = provider.get_chainid().await?;
+        let contract_address = Address::from_str(&CONFIG.contract)?;
+        let last_block = get_checkpoint(chain_id).unwrap_or(0);
 
-    let event = Contract::event_of_type::<MailReceivedFilter>(&provider)
-        .from_block(last_block)
-        .address(contract_address.into());
+        let event = Contract::event_of_type::<MailReceivedFilter>(&provider)
+            .from_block(last_block)
+            .address(contract_address.into());
 
-    let mut stream = event.subscribe_with_meta().await?;
-    while let Some(Ok((log, meta))) = stream.next().await {
-        let res = handle_log(log, &meta).await;
-        match res {
-            Ok(_) => {
-                write_checkpoint(chain_id, meta.block_number.as_u64())?;
-                println!("Log handle success.");
-            }, 
-            Err(e) => {
-                println!("Failed to handle log: {:?}", e);
+        let mut events = event.query_with_meta().await?;
+        for (log, meta) in events {
+            let res = handle_log(log, &meta).await;
+            match res {
+                Ok(_) => {
+                    write_checkpoint(chain_id, meta.block_number.as_u64())?;
+                    println!("Log handle success.");
+                }
+                Err(e) => {
+                    println!("Failed to handle log: {:?}", e);
+                }
             }
         }
     }
