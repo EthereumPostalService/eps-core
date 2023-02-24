@@ -27,7 +27,6 @@ pub async fn send_letter(letter: Letter) -> Result<String> {
         .json(&req)
         .send()
         .await?;
-
     let body: Letter = response.json().await?;
     // TODO
     Ok(body.id.unwrap())

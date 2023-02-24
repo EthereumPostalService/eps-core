@@ -82,11 +82,12 @@ async fn handle_log(event: MailReceivedFilter, meta: &LogMeta) -> anyhow::Result
     } else {
         decrypt_string(secret_key, event.msg_html)?
     };
+    let idem_key: String = format!("{:?}", meta.transaction_hash);
     let letter = Letter::new(
         from,
         target,
         msg,
-        meta.transaction_hash.to_string(),
+        idem_key,
         meta.transaction_index.as_u64(),
     );
     let letter_id = send_letter(letter).await?;
