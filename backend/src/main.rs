@@ -9,7 +9,7 @@ use api::{create_contact, get_default_sender, send_letter, Contact, Letter};
 use ecies::decrypt;
 use ethers::contract::Contract;
 use ethers::prelude::LogMeta;
-use ethers::providers::{Middleware,Ws};
+use ethers::providers::{Middleware, Ws};
 use ethers::utils::hex::decode;
 use ethers::{prelude::abigen, providers::Provider, types::Address};
 use std::str::FromStr;
@@ -49,6 +49,7 @@ async fn main() -> anyhow::Result<()> {
             }
         }
     }
+    println!("Completed Scan");
     Ok(())
 }
 
