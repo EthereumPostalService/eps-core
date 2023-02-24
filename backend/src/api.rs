@@ -99,8 +99,14 @@ pub struct Letter {
 }
 
 impl Letter {
-    pub fn new(from: Contact, to: Contact, html: String, tx_hash: String, tx_index: u64) -> Self {
-        let idem_key = format!("{}-{}", tx_hash, tx_index.to_string());
+    pub fn new(
+        from: Contact,
+        to: Contact,
+        html: String,
+        tx_hash: String,
+        tx_index: String,
+    ) -> Self {
+        let idem_key = format!("{}-{}", tx_hash, tx_index);
         Letter {
             idem_key: Some(idem_key),
             from,
