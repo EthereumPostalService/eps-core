@@ -3,14 +3,13 @@ extern crate lazy_static;
 mod api;
 mod checkpoint;
 mod config;
-mod listener;
 use crate::checkpoint::{get_checkpoint, write_checkpoint};
 use crate::config::CONFIG;
 use api::{create_contact, get_default_sender, send_letter, Contact, Letter};
 use ecies::decrypt;
 use ethers::contract::Contract;
 use ethers::prelude::LogMeta;
-use ethers::providers::{Middleware, StreamExt, Ws};
+use ethers::providers::{Middleware,Ws};
 use ethers::utils::hex::decode;
 use ethers::{prelude::abigen, providers::Provider, types::Address};
 use std::str::FromStr;
@@ -36,7 +35,7 @@ async fn main() -> anyhow::Result<()> {
             .from_block(last_block)
             .address(contract_address.into());
 
-        let mut events = event.query_with_meta().await?;
+        let events = event.query_with_meta().await?;
         for (log, meta) in events {
             let res = handle_log(log, &meta).await;
             match res {

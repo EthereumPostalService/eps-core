@@ -15,24 +15,3 @@ tokio = { version = "1.25", features = ["full"] }
 ecies = { version = "0.2", default-features = false, features = ["pure"] }
 cargo-deb = "1.42.1"
 tokio-tungstenite = { version = "0.17", features = ["native-tls"] }
-
-[package.metadata.deb]
-maintainer = "rsproule23@gmail.com"
-copyright = "2023, Ryan Sproule"
-assets = [
-	[
-		"target/release/mail",
-		"usr/bin/mail",
-		"755",
-	],
-	[
-		"README.md",
-		"usr/share/doc/mail/README",
-		"644",
-	],
-	[
-		"debian/mail.service",
-		"/lib/systemd/system/mail.service",
-		"644",
-	],
-]
