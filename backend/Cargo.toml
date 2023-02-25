@@ -15,3 +15,4 @@ tokio = { version = "1.25", features = ["full"] }
 ecies = { version = "0.2", default-features = false, features = ["pure"] }
 cargo-deb = "1.42.1"
 tokio-tungstenite = { version = "0.17", features = ["native-tls"] }
+lipsum = "0.8"

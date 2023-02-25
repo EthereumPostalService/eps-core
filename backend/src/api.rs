@@ -5,13 +5,11 @@ use crate::config::CONFIG;
 
 pub async fn send_letter(letter: Letter) -> Result<String> {
     let client = reqwest::Client::new();
-    // HACK: this is jank, we are dropping any other fields that were actualy customized in the
-    // letter object. but we dont use anything else atm and the reason i cant pass the whole obj
-    // is there is something wrong w the api that it doesnt let me send the full nested obj
     let req = LetterRequest {
         from: letter.from.id.unwrap(),
         to: letter.to.id.unwrap(),
         color: true,
+        address_placement: "insert_blank_page".to_string(),
         template: CONFIG.mail_api_template.clone(),
         merge_variables: MergeVariables {
             body: letter.html.unwrap(),
@@ -28,7 +26,6 @@ pub async fn send_letter(letter: Letter) -> Result<String> {
         .send()
         .await?;
     let body: Letter = response.json().await?;
-    // TODO
     Ok(body.id.unwrap())
 }
 #[derive(Debug, Deserialize, Serialize)]
@@ -37,6 +34,7 @@ struct LetterRequest {
     pub from: String,
     pub to: String,
     pub template: String,
+    pub address_placement: String,
     pub color: bool,
     pub merge_variables: MergeVariables,
     pub description: String,
@@ -63,8 +61,13 @@ pub async fn create_contact(contact: Contact) -> Result<Contact> {
 
 pub async fn get_default_sender() -> Result<Contact> {
     let sender = &CONFIG.default_sender;
+    let contact: Contact = get_contact_from_id(sender).await?;
+    Ok(contact)
+}
+
+pub async fn get_contact_from_id(id: &str) -> Result<Contact> {
     let client = reqwest::Client::new();
-    let uri = &[&CONFIG.mail_api_url, "/print-mail/v1/contacts/", sender].concat();
+    let uri = &[&CONFIG.mail_api_url, "/print-mail/v1/contacts/", id].concat();
     let response = client
         .get(uri)
         .header("x-api-key", &CONFIG.mail_api_key)
@@ -154,8 +157,8 @@ impl Contact {
         name: String,
     ) -> Self {
         Contact {
-            address_line_1: address_line_1,
-            country_code: country_code,
+            address_line_1,
+            country_code,
             first_name: Some(name),
             postal_or_zip: Some(postal_or_zip),
             address_line_2: Some(address_line_2),
@@ -168,27 +171,69 @@ impl Contact {
     }
 }
 
-#[tokio::test]
-async fn test_send_mail() {
-    let from_contact = Contact::new(
-        "the street".to_string(),
-        "unit 1".to_string(),
-        "City".to_string(),
-        "US".to_string(),
-        "12345".to_string(),
-        "name".to_string(),
-    );
-    let from = create_contact(from_contact).await.unwrap();
-    let to_contact = Contact::new(
-        "the street".to_string(),
-        "unit 1".to_string(),
-        "City".to_string(),
-        "US".to_string(),
-        "12345".to_string(),
-        "name".to_string(),
-    );
-    let to = create_contact(to_contact).await.unwrap();
-    let letter = Letter::new(to, from, "Hello world".to_string(), "txid".to_string(), 1);
-    let letter = send_letter(letter).await.unwrap();
-    println!("{:?}", letter);
+mod test {
+    use crate::api::{
+        create_contact, get_contact_from_id, get_default_sender, send_letter, Contact, Letter,
+    };
+    use ethers::prelude::rand::{self, distributions::Alphanumeric, thread_rng};
+    use lipsum::lipsum;
+    use rand::Rng;
+
+    #[tokio::test]
+    async fn test_send_mail() {
+        let mut rng = rand::thread_rng();
+
+        let rand_string: String = thread_rng()
+            .sample_iter(&Alphanumeric)
+            .take(30)
+            .map(char::from)
+            .collect();
+
+        let from_contact = Contact::new(
+            "the street".to_string(),
+            "unit 1".to_string(),
+            "City".to_string(),
+            "US".to_string(),
+            "12345".to_string(),
+            "name".to_string(),
+        );
+        let from = create_contact(from_contact).await.unwrap();
+        let to_contact = Contact::new(
+            "the street".to_string(),
+            "unit 1".to_string(),
+            "City".to_string(),
+            "US".to_string(),
+            "12345".to_string(),
+            "name".to_string(),
+        );
+        let to = create_contact(to_contact).await.unwrap();
+        let letter = Letter::new(
+            to,
+            from,
+            "Hello world".to_string(),
+            rand_string,
+            "1".to_string(),
+        );
+        let letter = send_letter(letter).await.unwrap();
+        println!("{:?}", letter);
+    }
+
+    #[tokio::test]
+    async fn test_send_long_mail() {
+        let rand_string: String = thread_rng()
+            .sample_iter(&Alphanumeric)
+            .take(30)
+            .map(char::from)
+            .collect();
+
+        let to = get_contact_from_id("contact_4TpcSvfXbgccXpQNkUjUVR")
+            .await
+            .unwrap();
+        let from = get_contact_from_id("contact_1v7o5ECeH8B6D5ogriMwga")
+            .await
+            .unwrap();
+        let letter = Letter::new(from, to, lipsum(400), rand_string, "1".to_string());
+        let letter = send_letter(letter).await.unwrap();
+        println!("{:?}", letter);
+    }
 }
