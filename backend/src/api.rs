@@ -170,10 +170,10 @@ impl Contact {
         }
     }
 }
-
+#[cfg(test)]
 mod test {
     use crate::api::{
-        create_contact, get_contact_from_id, get_default_sender, send_letter, Contact, Letter,
+        create_contact, get_contact_from_id, send_letter, Contact, Letter,
     };
     use ethers::prelude::rand::{self, distributions::Alphanumeric, thread_rng};
     use lipsum::lipsum;
@@ -181,8 +181,6 @@ mod test {
 
     #[tokio::test]
     async fn test_send_mail() {
-        let mut rng = rand::thread_rng();
-
         let rand_string: String = thread_rng()
             .sample_iter(&Alphanumeric)
             .take(30)
