@@ -30,17 +30,15 @@ async fn main() -> anyhow::Result<()> {
         let chain_id = provider.get_chainid().await?;
         let contract_address = Address::from_str(&CONFIG.contract)?;
         let last_block = get_checkpoint(chain_id).unwrap_or(0);
-
+        let curr_block = provider.get_block_number().await?;
         let event = Contract::event_of_type::<MailReceivedFilter>(&provider)
             .from_block(last_block)
             .address(contract_address.into());
-
         let events = event.query_with_meta().await?;
         for (log, meta) in events {
             let res = handle_log(log, &meta).await;
             match res {
                 Ok(_) => {
-                    write_checkpoint(chain_id, meta.block_number.as_u64() + 1)?;
                     println!("Log handle success.");
                 }
                 Err(e) => {
@@ -48,8 +46,12 @@ async fn main() -> anyhow::Result<()> {
                 }
             }
         }
+        write_checkpoint(chain_id, curr_block.as_u64())?;
+        println!(
+            "Completed Scan on chain {:?} to height {:?}",
+            chain_id, curr_block
+        );
     }
-    println!("Completed Scan");
     Ok(())
 }
 
