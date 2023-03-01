@@ -3,6 +3,7 @@ extern crate lazy_static;
 mod api;
 mod checkpoint;
 mod config;
+mod pdf;
 use crate::checkpoint::{get_checkpoint, write_checkpoint};
 use crate::config::CONFIG;
 use api::{create_contact, get_default_sender, send_letter, Contact, Letter};
@@ -36,13 +37,16 @@ async fn main() -> anyhow::Result<()> {
             .address(contract_address.into());
         let events = event.query_with_meta().await?;
         for (log, meta) in events {
-            let res = handle_log(log, &meta).await;
+            let res = handle_log(log.clone(), &meta).await;
             match res {
                 Ok(_) => {
                     println!("Log handle success.");
                 }
                 Err(e) => {
-                    println!("Failed to handle log: {:?}", e);
+                    println!(
+                        "Failed to handle log: {:?} | Log: {:?} | Meta: {:?}",
+                        e, log, meta
+                    );
                 }
             }
         }
