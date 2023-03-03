@@ -22,3 +22,5 @@ target/
 
 node_modules
 dist/
+*.pdf
+

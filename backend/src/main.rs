@@ -3,6 +3,7 @@ extern crate lazy_static;
 mod api;
 mod checkpoint;
 mod config;
+mod pdf;
 use crate::checkpoint::{get_checkpoint, write_checkpoint};
 use crate::config::CONFIG;
 use api::{create_contact, get_default_sender, send_letter, Contact, Letter};
