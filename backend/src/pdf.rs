@@ -1,8 +1,8 @@
-use std::env;
+use std::{env, path};
 
-use genpdf::{Alignment, Size, PaperSize};
+use genpdf::{Alignment, PaperSize};
 
-pub fn gen_pdf(id: String, msg: String) -> anyhow::Result<()> {
+pub fn gen_pdf(id: String, msg: String) -> anyhow::Result<path::PathBuf> {
     // Load a font from the file system
     let p = env::current_dir();
     println!("{:?}", p);
@@ -22,18 +22,19 @@ pub fn gen_pdf(id: String, msg: String) -> anyhow::Result<()> {
         .expect("failed to load logo");
     logo.set_alignment(Alignment::Center);
     doc.push(logo);
-    doc.push(genpdf::elements::Break::new(3)); 
+    doc.push(genpdf::elements::Break::new(3));
     doc.push(genpdf::elements::Paragraph::new(msg));
     // Render the document and write it to a file
-    doc.render_to_file(format!("out/{}.pdf", id))
+    let out_path = format!("./out/{}.pdf", id);
+    doc.render_to_file(&out_path)
         .expect("Failed to write PDF file");
-    Ok(())
+    Ok(path::Path::new(&out_path).into())
 }
 
 #[cfg(test)]
 mod test {
-    use lipsum::lipsum;
     use crate::pdf::*;
+    use lipsum::lipsum;
     #[tokio::test]
     async fn test_create_pdf() {
         gen_pdf("test".to_string(), "This is the message".to_string()).unwrap();

@@ -1,28 +1,31 @@
+use std::fs;
+
 use anyhow::Result;
+use reqwest::multipart;
 use serde::{Deserialize, Serialize};
 
-use crate::config::CONFIG;
+use crate::{config::CONFIG, pdf::gen_pdf};
 
 pub async fn send_letter(letter: Letter) -> Result<String> {
     let client = reqwest::Client::new();
-    let req = LetterRequest {
-        from: letter.from.id.unwrap(),
-        to: letter.to.id.unwrap(),
-        color: true,
-        address_placement: "insert_blank_page".to_string(),
-        template: CONFIG.mail_api_template.clone(),
-        merge_variables: MergeVariables {
-            body: letter.html.unwrap(),
-        },
-        description: letter.idem_key.clone().unwrap(),
-    };
     let uri = &[&CONFIG.mail_api_url, "/print-mail/v1/letters"].concat();
+    let letter_pdf_path = gen_pdf(letter.idem_key.clone().unwrap(), letter.html.unwrap())?;
+    let pdf_file = fs::read(letter_pdf_path).unwrap();
+    let pdf_file_part = reqwest::multipart::Part::bytes(pdf_file)
+        .file_name(letter.idem_key.clone().unwrap())
+        .mime_str("application/pdf")
+        .unwrap();
+    let form = multipart::Form::new()
+        .text("from", letter.from.id.expect("missing `from` in letter"))
+        .text("to", letter.to.id.expect("missing `to` in letter"))
+        .text("addressPlacement", "insert_blank_page")
+        .text("color", "true")
+        .part("pdf", pdf_file_part);
     let response = client
         .post(uri)
         .header("x-api-key", &CONFIG.mail_api_key)
-        .header("Content-Type", "application/json")
         .header("Idempotency-key", letter.idem_key.unwrap())
-        .json(&req)
+        .multipart(form)
         .send()
         .await?;
     let body: Letter = response.json().await?;
@@ -172,9 +175,7 @@ impl Contact {
 }
 #[cfg(test)]
 mod test {
-    use crate::api::{
-        create_contact, get_contact_from_id, send_letter, Contact, Letter,
-    };
+    use crate::api::{create_contact, get_contact_from_id, send_letter, Contact, Letter};
     use ethers::prelude::rand::{self, distributions::Alphanumeric, thread_rng};
     use lipsum::lipsum;
     use rand::Rng;
@@ -230,7 +231,7 @@ mod test {
         let from = get_contact_from_id("contact_1v7o5ECeH8B6D5ogriMwga")
             .await
             .unwrap();
-        let letter = Letter::new(from, to, lipsum(400), rand_string, "1".to_string());
+        let letter = Letter::new(from, to, lipsum(4000), rand_string, "1".to_string());
         let letter = send_letter(letter).await.unwrap();
         println!("{:?}", letter);
     }
