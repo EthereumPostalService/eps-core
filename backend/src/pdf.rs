@@ -6,7 +6,7 @@ pub fn gen_pdf(id: String, msg: String) -> anyhow::Result<path::PathBuf> {
     // Load a font from the file system
     let p = env::current_dir();
     println!("{:?}", p);
-    let font_family = genpdf::fonts::from_files("./assets/fonts", "monospace", None)
+    let font_family = genpdf::fonts::from_files("./backend/assets/fonts", "monospace", None)
         .expect("Failed to load font family");
     // Create a document and set the default font family
     let mut doc = genpdf::Document::new(font_family);
@@ -18,7 +18,7 @@ pub fn gen_pdf(id: String, msg: String) -> anyhow::Result<path::PathBuf> {
     decorator.set_margins(10);
     doc.set_page_decorator(decorator);
     // Add one or more elements
-    let mut logo = genpdf::elements::Image::from_path("./assets/imgs/eps-logo.jpg")
+    let mut logo = genpdf::elements::Image::from_path("./backend/assets/imgs/eps-logo.jpg")
         .expect("failed to load logo");
     logo.set_alignment(Alignment::Center);
     doc.push(logo);
